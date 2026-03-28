@@ -1,8 +1,12 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = BASE_DIR.parent
+
+load_dotenv(PROJECT_DIR / ".env")
 
 UPLOAD_DIR = BASE_DIR / "uploads"
 CROPS_DIR = BASE_DIR / "crops"
