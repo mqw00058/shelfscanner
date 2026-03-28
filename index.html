@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shelf Scanner - Smart Shopping</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google AdSense -->
+    <!-- TODO: Replace ca-pub-XXXXXXXXXXXXXXXX with your actual AdSense publisher ID -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle">&#9776;</button>
+            <h1 class="logo">ShelfScanner</h1>
+        </div>
+        <div class="header-right">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search products...">
+            </div>
+            <div class="sort-select">
+                <select id="sortSelect">
+                    <option value="name">Name</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Select Store</h2>
+        </div>
+        <ul class="store-list">
+            <li class="store-item active" data-store="costco">
+                <span class="store-icon">🏬</span>
+                <span class="store-name-text">Costco</span>
+                <button class="store-upload-btn" data-store="costco" title="Upload shelf photo/video for Costco">📷</button>
+            </li>
+            <li class="store-item" data-store="sams-club">
+                <span class="store-icon">🏪</span>
+                <span class="store-name-text">Sam's Club</span>
+                <button class="store-upload-btn" data-store="sams-club" title="Upload shelf photo/video for Sam's Club">📷</button>
+            </li>
+            <li class="store-item" data-store="walmart">
+                <span class="store-icon">🛒</span>
+                <span class="store-name-text">Walmart</span>
+                <button class="store-upload-btn" data-store="walmart" title="Upload shelf photo/video for Walmart">📷</button>
+            </li>
+            <li class="store-item" data-store="traders-joe">
+                <span class="store-icon">🌿</span>
+                <span class="store-name-text">Trader Joe's</span>
+                <button class="store-upload-btn" data-store="traders-joe" title="Upload shelf photo/video for Trader Joe's">📷</button>
+            </li>
+            <li class="store-item" data-store="kroger">
+                <span class="store-icon">🛍️</span>
+                <span class="store-name-text">Kroger</span>
+                <button class="store-upload-btn" data-store="kroger" title="Upload shelf photo/video for Kroger">📷</button>
+            </li>
+        </ul>
+        <!-- Sidebar Ad: vertical banner below store list -->
+        <div class="sidebar-ad">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="SIDEBAR_AD_SLOT"
+                 data-ad-format="vertical"
+                 data-full-width-responsive="false"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        <div class="sidebar-footer">
+            <div class="upload-section">
+                <button class="upload-btn" id="uploadBtn">📷 Upload Video / Photo</button>
+                <p class="upload-hint">Upload store shelf footage<br>to auto-detect products</p>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content" id="content">
+        <div class="store-banner" id="storeBanner">
+            <div class="banner-top">
+                <div>
+                    <h2 id="storeName">Costco</h2>
+                    <p id="storeDesc">Products detected from Costco store shelves</p>
+                </div>
+                <div class="banner-actions">
+                    <button class="banner-upload-btn" id="bannerUploadBtn">📷 Upload Shelf</button>
+                    <span class="product-count" id="productCount"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banner Ad: leaderboard between banner and products -->
+        <div class="ad-banner" id="adBanner">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="BANNER_AD_SLOT"
+                 data-ad-format="horizontal"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <div class="category-tabs" id="categoryTabs"></div>
+
+        <div class="product-grid" id="productGrid">
+            <!-- In-feed ads are dynamically inserted by app.js -->
+        </div>
+
+        <!-- Bottom Ad: after product grid -->
+        <div class="ad-bottom" id="adBottom">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="BOTTOM_AD_SLOT"
+                 data-ad-format="horizontal"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </main>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Upload Modal -->
+    <div class="modal upload-modal" id="uploadModal">
+        <button class="modal-close" id="uploadModalClose">&times;</button>
+        <div class="upload-modal-body">
+            <!-- Target store header -->
+            <div class="upload-store-header" id="uploadStoreHeader">
+                <span class="upload-store-icon" id="uploadStoreIcon">🏬</span>
+                <div>
+                    <h2 id="uploadStoreTitle">Upload for Costco</h2>
+                    <p class="upload-modal-desc">Products will be added to <strong id="uploadStoreName">Costco</strong>'s page</p>
+                </div>
+            </div>
+
+            <!-- Store quick-switch pills -->
+            <div class="upload-store-pills" id="uploadStorePills">
+                <button class="store-pill active" data-store="costco">🏬 Costco</button>
+                <button class="store-pill" data-store="sams-club">🏪 Sam's Club</button>
+                <button class="store-pill" data-store="walmart">🛒 Walmart</button>
+                <button class="store-pill" data-store="traders-joe">🌿 Trader Joe's</button>
+                <button class="store-pill" data-store="kroger">🛍️ Kroger</button>
+            </div>
+
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-icon">📸</div>
+                <p class="drop-zone-text">Drag & drop a photo or video here</p>
+                <p class="drop-hint">or</p>
+                <button type="button" class="file-picker-btn" id="filePickerBtn">Browse Files</button>
+                <p class="drop-formats">Supports: JPG, PNG, WebP, MP4, MOV, AVI, MKV</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*,video/*,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG,.webp,.WEBP,.bmp,.BMP,.tiff,.TIFF,.mp4,.MP4,.mov,.MOV,.avi,.AVI,.mkv,.MKV,.webm,.WEBM,.m4v,.M4V" hidden>
+
+            <!-- Price tag position selector -->
+            <div class="price-tag-position" id="priceTagPosition" style="display:none">
+                <p class="price-tag-label">Where are the price tags on the shelf?</p>
+                <div class="price-tag-options">
+                    <button class="price-tag-btn active" data-position="below">
+                        <span class="price-tag-diagram">
+                            <span class="diagram-product">📦</span>
+                            <span class="diagram-tag">💲</span>
+                        </span>
+                        <span>Below product</span>
+                    </button>
+                    <button class="price-tag-btn" data-position="above">
+                        <span class="price-tag-diagram above">
+                            <span class="diagram-tag">💲</span>
+                            <span class="diagram-product">📦</span>
+                        </span>
+                        <span>Above product</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="upload-preview" id="uploadPreview" style="display:none">
+                <div class="preview-media" id="previewMedia"></div>
+                <div class="preview-info">
+                    <p class="file-name" id="fileName"></p>
+                    <p class="file-size" id="fileSize"></p>
+                    <button class="remove-file-btn" id="removeFileBtn">Remove</button>
+                </div>
+            </div>
+
+            <!-- Hidden select to keep store value (used by JS) -->
+            <select id="uploadStoreSelect" hidden>
+                <option value="costco">Costco</option>
+                <option value="sams-club">Sam's Club</option>
+                <option value="walmart">Walmart</option>
+                <option value="traders-joe">Trader Joe's</option>
+                <option value="kroger">Kroger</option>
+            </select>
+
+            <div class="upload-progress" id="uploadProgress" style="display:none">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-text" id="progressText">Uploading...</p>
+            </div>
+
+            <div class="upload-result" id="uploadResult" style="display:none">
+                <div class="result-icon" id="resultIcon"></div>
+                <p class="result-text" id="resultText"></p>
+            </div>
+
+            <button class="analyze-btn" id="analyzeBtn" disabled>Analyze Shelf</button>
+        </div>
+    </div>
+
+    <div class="modal" id="productModal">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <div class="modal-body">
+            <div class="modal-image" id="modalImage"></div>
+            <div class="modal-info">
+                <span class="modal-store" id="modalStore"></span>
+                <h2 id="modalName"></h2>
+                <p class="modal-desc" id="modalDesc"></p>
+                <div class="modal-price" id="modalPrice"></div>
+                <div class="modal-meta">
+                    <p id="modalUnit"></p>
+                    <p id="modalCategory"></p>
+                </div>
+                <div class="modal-image-source" id="modalImageSource"></div>
+                <div class="modal-shelf-info">
+                    <h4>Shelf Detection Info</h4>
+                    <p id="modalShelfInfo"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="classifier.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
