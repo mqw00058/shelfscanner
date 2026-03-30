@@ -167,7 +167,7 @@ function renderProducts() {
                 <div class="product-name">${p.name}</div>
                 <div class="product-unit">${p.unit}</div>
                 <div class="product-price">
-                    <span class="currency">$</span>${p.price.toFixed(2)}
+                    <span class="currency">$</span>${(p.price ?? 0).toFixed(2)}
                 </div>
             </div>
         </div>`;
@@ -199,7 +199,7 @@ function openModal(product) {
     document.getElementById("modalStore").textContent = storeInfo[currentStore].name;
     document.getElementById("modalName").textContent = product.name;
     document.getElementById("modalDesc").textContent = product.desc;
-    document.getElementById("modalPrice").textContent = `$${product.price.toFixed(2)}`;
+    document.getElementById("modalPrice").textContent = `$${(product.price ?? 0).toFixed(2)}`;
     document.getElementById("modalUnit").textContent = `Size: ${product.unit}`;
     document.getElementById("modalCategory").textContent = `Category: ${product.category} (${getCategorySourceLabel(product)})`;
     document.getElementById("modalImageSource").textContent = getImageSourceLabel(product);
